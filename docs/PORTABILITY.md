@@ -62,7 +62,7 @@ stt:
     openrouter_stt:
       type: command
       command: python3 ~/.local/bin/openrouter-stt-client.py {input_path} {output_path} {language} {model}
-      model: openai/gpt-4o-transcribe   # без строки: openai/whisper-large-v3-turbo (дешевле, ошибок больше)
+      model: openai/whisper-large-v3-turbo   # модель STT меняется здесь, см. «Качество STT»
       timeout: 60
 tts:
   provider: piper_daemon
@@ -80,6 +80,7 @@ tts:
 
 - **STT.** При `stt.language: auto` клиент не передаёт язык, и модель определяет его сама.
 - **Качество STT.** Запись идёт по HFP (узкая полоса, тихо, ~15 потерянных SCO-пакетов). Клиент перед отправкой срезает гул и выравнивает громкость и шлёт WAV без сжатия. Замер на 10 фразах с имитацией HFP, по три прогона: доля ошибок в словах (WER) у `whisper-large-v3-turbo` с прежним mp3 — 29%, с обработкой — 23%, у `gpt-4o-transcribe` с обработкой — 15%. Задержка у всех около 1 с. Подсказка со словарём (`prompt`) не помогла.
+  Цена по `usage.cost` OpenRouter за 5-секундную фразу: `whisper-large-v3-turbo` $0.00011 (тарифицируется минимум 10 с), `gpt-4o-mini-transcribe` $0.00016, `gpt-4o-transcribe` $0.00032. По умолчанию стоит самая дешёвая; другая модель включается строкой `model:` в `stt.providers.openrouter_stt`, без перезапуска Hermes (конфиг STT читается на каждый запрос).
 - **TTS.** `piper-tts-client.py` выбирает голос по тексту ответа: если кириллицы меньше 30%, читает английским голосом `ryan`, иначе выбранным русским.
 - **Язык ответа модели.** Если промпт Hermes в основном русский, бесплатные модели отвечают по-русски на любую речь, даже при правиле в `SOUL.md` и в памяти. Поэтому STT-клиент добавляет к нерусской реплике строку `[Language: the user spoke English. Reply in English only.]`. Это единственный способ, который сработал надёжно: правка промпта не перевешивает русский контекст.
 

@@ -6,7 +6,7 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SDK_DIR="" SDK_SHA="323e3303ab68981f810fc3208119cd8a22e64af0"
+SDK_DIR="" SDK_SHA="81f05a1006c6df726bf8433d30fd91ea4993fd5c"
 ADDR="" SERVER="ws://127.0.0.1:8765/gadget" SERVICES=1 SYSTEM=0 NAME="MiniToo Gadget"
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -44,7 +44,7 @@ if [ ! -d "$SDK_DIR/.git" ]; then
   git -C "$SDK_DIR" checkout -q "$SDK_SHA"
 fi
 HEAD_SHA="$(git -C "$SDK_DIR" rev-parse HEAD 2>/dev/null || true)"
-[ "$HEAD_SHA" = "$SDK_SHA" ] || echo "предупреждение: SDK в $SDK_DIR на $HEAD_SHA, ожидался $SDK_SHA (v0.2.0)" >&2
+[ "$HEAD_SHA" = "$SDK_SHA" ] || echo "предупреждение: SDK в $SDK_DIR на $HEAD_SHA, ожидался $SDK_SHA (v0.4.1)" >&2
 
 say "Виртуальное окружение"
 [ -d "$REPO/.venv" ] || python3 -m venv "$REPO/.venv"

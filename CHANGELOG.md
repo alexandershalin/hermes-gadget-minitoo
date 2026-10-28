@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.2 — 2026-10-28
+
+- Hermes Gadget SDK updated from v0.2.0 (`323e330`) to v0.4.1 (`81f05a1`); the native core (`libhgsim`, ABI 8) must be rebuilt with `hermes-gadget build-sim`.
+- The client answers the core's new `wall_time` request with the host's local time (for the resting clock).
+- The `hermes-minitoo` alias of `hermes-gadget-minitoo` (kept for one release since 0.2.0) is removed; the systemd unit already runs `hermes-gadget-minitoo`.
+- Fix: when the display worker gave up on a frame after `retry_window_s`, it set `dirty`/`last_queued` from its own thread and `present()` could overwrite them, so the screen waited for the next change. The worker now only raises a flag that `present()` consumes.
+- New 0.3/0.4 features (Opus speaker audio, dashboard, per-profile faces, timers) also need the matching Hermes plugin; this release does not change it.
+
 ## 0.2.1 — 2026-10-10
 
 - Repository renamed to `hermes-gadget-minitoo` (GitHub redirects the old name). Docs and research links updated. The Python package name, the local checkout path and the state directory (`~/.local/state/hermes-minitoo-gadget`, holds the pairing) keep their names.

@@ -202,6 +202,7 @@ class MiniTooDisplay:
         # changing when frames are retried during normal operation.
         self._stop = threading.Event()
         self._fail_streak = 0
+        self._refresh = False  # set by the worker, consumed by present()
         self._worker = threading.Thread(target=self._run, name="minitoo-display", daemon=True)
         self._worker.start()
 
@@ -209,6 +210,12 @@ class MiniTooDisplay:
         return True
 
     def present(self, device, now_ms: int) -> None:
+        if self._refresh:
+            # The worker gave up on a frame: take a fresh snapshot now. Only this (main)
+            # thread writes dirty/last_queued, so the request cannot be overwritten.
+            self._refresh = False
+            self.dirty = True
+            self.last_queued = -self.update_interval_ms
         if not self.dirty:
             return
         screen = self._screen(device) if self._watch_screen else None
@@ -289,8 +296,7 @@ class MiniTooDisplay:
                         LOG.warning("MiniToo display update failed after %.0fs: %s%s",
                                     elapsed, exc, detail)
                         # Do not lose the screen: present() takes a fresh snapshot.
-                        self.dirty = True
-                        self.last_queued = -self.update_interval_ms
+                        self._refresh = True
                         break
                     streak = self._fail_streak
                     if streak <= _RETRY_LOG_FIRST or streak % _RETRY_LOG_EVERY == 0:

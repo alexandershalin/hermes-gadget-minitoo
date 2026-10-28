@@ -224,3 +224,12 @@ def test_default_stack_puts_the_expected_bytes_on_the_wire(monkeypatch):
     rgb = D.rgb565le_to_rgb888(bytes([1]) * (160 * 128 * 2))
     transfer = build_transfer(bytes(range(256)) * 2 + rgb[:4])
     assert sock.written == [transfer.start, *transfer.chunks]
+
+
+def test_worker_refresh_request_survives_a_concurrent_present(monkeypatch):
+    sim = Sim(D, monkeypatch)
+    d = sim.display
+    d.dirty, d.last_queued = False, 5000
+    d._refresh = True  # the worker gave up on a frame
+    d.present(sim.dev, 6000)  # within update_interval_ms, nothing dirty: still re-queued
+    assert (d._refresh, d.dirty, d.last_queued) == (False, False, 6000)

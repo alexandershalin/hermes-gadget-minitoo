@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hermes-minitoo-gadget"
-version = "0.2.1"
+version = "0.2.2"
 description = "Hermes Gadget client for the Divoom MiniToo (iteration 1: Linux)."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  "hermes-gadget @ git+https://github.com/Adolanium/hermes-gadget-sdk.git@323e3303ab68981f810fc3208119cd8a22e64af0",  # v0.2.0
+  "hermes-gadget @ git+https://github.com/Adolanium/hermes-gadget-sdk.git@81f05a1006c6df726bf8433d30fd91ea4993fd5c",  # v0.4.1
   "sounddevice>=0.4.6,<0.6",
 ]
 
@@ -18,8 +18,6 @@ dev = ["pytest>=8,<10", "ruff>=0.6"]
 
 [project.scripts]
 hermes-gadget-minitoo = "hermes_minitoo.cli:main"
-# Alias of the same entry point, kept for one release (existing services and scripts use it).
-hermes-minitoo = "hermes_minitoo.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

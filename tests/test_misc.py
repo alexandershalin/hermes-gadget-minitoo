@@ -45,5 +45,5 @@ def test_entry_points_name_the_new_command():
     root = Path(__file__).resolve().parent.parent
     scripts = tomllib.loads((root / "pyproject.toml").read_text())["project"]["scripts"]
     assert scripts["hermes-gadget-minitoo"] == "hermes_minitoo.cli:main"
-    assert scripts["hermes-minitoo"] == scripts["hermes-gadget-minitoo"]
+    assert "hermes-minitoo" not in scripts  # the 0.2.0 alias was removed in 0.2.2
     assert "hermes-gadget" not in scripts  # never shadow the SDK's own command

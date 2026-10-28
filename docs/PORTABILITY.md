@@ -16,7 +16,7 @@
 
 Клиент ставится **на том же компьютере, где работает Hermes**, по образцу `hermes-gadget linux` (те же модули `client`, `control`, `audio`, `display`, `cli`; от SDK берутся только ядро устройства, WebSocket-транспорт и сопряжение): это отдельный процесс, который подключается к плагину gadget по WebSocket (`"server": "ws://127.0.0.1:8765/gadget"` в `config.json`, при необходимости `token` и `wss://`). Колонка при этом должна быть в радиусе Bluetooth этого компьютера. Запуск на другой машине тоже возможен (поменять `server`), но не проверялся.
 
-Команды: `hermes-gadget-minitoo run|status|messages|send|event|button|audio-devices|audio-check|capabilities`. Это отдельный исполняемый файл, а не подкоманда `hermes-gadget` (у SDK нет хука для чужих подкоманд, а подмена его скрипта ломалась бы при переустановке SDK). Старое имя `hermes-minitoo` работает как алиас.
+Команды: `hermes-gadget-minitoo run|status|messages|send|event|button|audio-devices|audio-check|capabilities`. Это отдельный исполняемый файл, а не подкоманда `hermes-gadget` (у SDK нет хука для чужих подкоманд, а подмена его скрипта ломалась бы при переустановке SDK).
 
 ## Что входит
 

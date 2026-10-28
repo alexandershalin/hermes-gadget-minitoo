@@ -38,7 +38,7 @@ The lossless path is based on the real-device-verified work in `sirnugget11/divo
 
 Implemented:
 
-- Hermes Gadget SDK `v0.2.0` as runtime core.
+- Hermes Gadget SDK `v0.4.1` as runtime core.
 - Native Hermes Gadget canvas: **160×128**.
 - Lossless LZO1X RGB888 MiniToo live payload.
 - Exact ready-ACK handling before chunks.
@@ -55,7 +55,7 @@ Still awaiting physical verification on this project's Linux host:
 - best update interval for interactive Hermes state changes;
 - reconnect behavior on the actual adapter.
 
-> **Client.** `hermes-gadget-minitoo` is a client for the Hermes Gadget SDK, a sibling of the SDK's own `hermes-gadget linux`: same structure (`client`, `control`, `audio`, `display`, `cli`), same commands, same config shape. It uses only the SDK's device core, WebSocket transport and pairing; the Linux client's code is not imported. It installs on the computer that runs Hermes. Iteration 1 supports Linux (BlueZ + PipeWire); the platform-specific code lives in `src/hermes_minitoo/platforms/linux/`. The old `hermes-minitoo` command stays as an alias for one release.
+> **Client.** `hermes-gadget-minitoo` is a client for the Hermes Gadget SDK, a sibling of the SDK's own `hermes-gadget linux`: same structure (`client`, `control`, `audio`, `display`, `cli`), same commands, same config shape. It uses only the SDK's device core, WebSocket transport and pairing; the Linux client's code is not imported. It installs on the computer that runs Hermes. Iteration 1 supports Linux (BlueZ + PipeWire); the platform-specific code lives in `src/hermes_minitoo/platforms/linux/`.
 
 ## Install
 

@@ -1,8 +1,7 @@
 """``hermes-gadget-minitoo``: run and control a MiniToo gadget.
 
 Same commands as ``hermes-gadget linux`` (run, status, messages, send, event, button,
-audio-devices, audio-check) plus ``capabilities``. ``hermes-minitoo`` is kept as an alias of
-the same entry point for one release.
+audio-devices, audio-check) plus ``capabilities``.
 """
 
 from __future__ import annotations

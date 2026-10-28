@@ -47,13 +47,15 @@ Implemented:
 - Latest-frame-wins worker queue so Bluetooth cannot backlog stale Hermes screens.
 - Hermes Gadget Linux audio output can target MiniToo as a normal Bluetooth speaker.
 - CLI/status/control socket and research capability registry.
+- Voice: Play/Pause on the speaker starts and stops a recording (HFP), replies play over A2DP; joystick for cancel, new session and last reply.
 
-Still awaiting physical verification on this project's Linux host:
+Verified on hardware (Divoom MiniToo, Pentium N3700, Intel `8087:0a2a`, Ubuntu 26.04):
 
-- the first native 160×128 Hermes screen on the user's MiniToo;
-- RFCOMM + A2DP simultaneously on BlueZ/PipeWire;
-- best update interval for interactive Hermes state changes;
-- reconnect behavior on the actual adapter.
+- native 160×128 Hermes screens on the MiniToo;
+- RFCOMM screen and A2DP sound at the same time; the A2DP -> HFP switch during recording drops RFCOMM, the transport reconnects and the last frame is repeated;
+- voice round trip with handoff (2026-10-23).
+
+Not tuned yet: the update interval stays at the conservative 2.5 s. Details: [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md).
 
 > **Client.** `hermes-gadget-minitoo` is a client for the Hermes Gadget SDK, a sibling of the SDK's own `hermes-gadget linux`: same structure (`client`, `control`, `audio`, `display`, `cli`), same commands, same config shape. It uses only the SDK's device core, WebSocket transport and pairing; the Linux client's code is not imported. It installs on the computer that runs Hermes. Iteration 1 supports Linux (BlueZ + PipeWire); the platform-specific code lives in `src/hermes_minitoo/platforms/linux/`.
 

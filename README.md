@@ -130,6 +130,10 @@ Safe starting profile:
 
 The 2.5-second interval is intentionally conservative for the first hardware validation. Once measured on the actual Linux server, it can be tuned downward without changing the codec.
 
+Optional `"timezone": "Europe/Moscow"` (IANA name) sets the zone of the resting clock; without it the host's zone is used.
+
+Device settings without the on-screen menu: `hermes-gadget-minitoo console "set clock 60"` turns the resting clock on after 60 s of rest (`set clock 0` turns it off); `console help` lists the keys. Status tiles for the dashboard (joystick left while idle) come from `hermes gadget tile set` on the Hermes host.
+
 ## Known issues and decisions
 
 [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md) — what was verified on hardware, what is not, and why things are built the way they are. Installing on another host: [docs/PORTABILITY.md](docs/PORTABILITY.md).

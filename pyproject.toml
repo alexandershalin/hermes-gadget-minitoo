@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hermes-minitoo-gadget"
-version = "0.2.2"
+version = "0.2.3"
 description = "Hermes Gadget client for the Divoom MiniToo (iteration 1: Linux)."
 readme = "README.md"
 requires-python = ">=3.10"

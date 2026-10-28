@@ -16,7 +16,9 @@ import re
 import tempfile
 import time
 from collections import deque
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from hermes_gadget import __version__ as core_version
 from hermes_gadget.sim.native import BUTTONS, NativeDevice
@@ -77,6 +79,7 @@ class Client:
         self.messages: deque[dict] = deque(maxlen=20)
         self.sequence = 0
         name = config.get("name", DEFAULT_NAME)
+        self.timezone = ZoneInfo(config["timezone"]) if "timezone" in config else None
         # Configuration is authoritative on every start; identity stays in device.json.
         self.state.data.update(server=config["server"], name=name, token=config.get("token", ""))
         self.state.save()
@@ -175,6 +178,13 @@ class Client:
                 raise ValueError("button must be talk, cancel, up or down; pressed must be boolean")
             self.device.button(BUTTONS[button], pressed)
             return {"ok": True}
+        if command == "console":
+            # The device core's own console (`set clock 60`, `get volume`); it validates the line.
+            line = request.get("line")
+            if (not isinstance(line, str) or not line.strip() or len(line) > 512
+                    or any(c in line for c in "\x00\r\n")):
+                raise ValueError("line must be one console line of 1 to 512 characters")
+            return {"output": self.device.console(line.strip())}
         if command not in {"send", "event"}:
             raise ValueError("unknown command")
         status = self.device.status()
@@ -243,7 +253,8 @@ class Client:
         return os.urandom(n)
 
     def wall_time(self) -> time.struct_time:
-        return time.localtime()  # the OS keeps the time and timezone
+        # The OS keeps the time; config "timezone" overrides its zone (servers often run in UTC).
+        return datetime.now(self.timezone).timetuple() if self.timezone else time.localtime()
 
     def log(self, level: int, message: str) -> None:
         # The core logs connection state and action failures, never device keys.

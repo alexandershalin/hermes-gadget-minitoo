@@ -1,7 +1,7 @@
 """``hermes-gadget-minitoo``: run and control a MiniToo gadget.
 
 Same commands as ``hermes-gadget linux`` (run, status, messages, send, event, button,
-audio-devices, audio-check) plus ``capabilities``.
+audio-devices, audio-check) plus ``capabilities`` and ``console``.
 """
 
 from __future__ import annotations
@@ -56,6 +56,8 @@ def parser() -> argparse.ArgumentParser:
     button = add("button", help="Press or release a device control")
     button.add_argument("button", choices=("talk", "cancel", "up", "down"))
     button.add_argument("state", choices=("press", "release"))
+    console = add("console", help="Run one device console line, e.g. 'set clock 60'")
+    console.add_argument("line")
     return p
 
 
@@ -102,6 +104,8 @@ def main(argv: list[str] | None = None) -> int:
             message.update(name=args.name, data=json.loads(args.data), notify=args.notify)
         elif args.command == "button":
             message.update(button=args.button, pressed=args.state == "press")
+        elif args.command == "console":
+            message["line"] = args.line
         result = request(args.state_dir, message)
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 1 if "error" in result else 0

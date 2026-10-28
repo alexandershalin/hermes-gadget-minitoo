@@ -118,3 +118,10 @@ def test_unknown_minitoo_option_is_still_rejected(tmp_path):
     with pytest.raises(ValueError, match="known MiniToo options"):
         load_config(_write(tmp_path, minitoo={"address": "AA:BB:CC:DD:EE:FF",
                                               "chunk_timeout_ms": 1}))
+
+
+def test_timezone_is_validated(tmp_path):
+    assert load_config(_write(tmp_path, timezone="Europe/Moscow"))["timezone"] == "Europe/Moscow"
+    for bad in ("Mars/Olympus", 3, ""):
+        with pytest.raises(ValueError, match="timezone"):
+            load_config(_write(tmp_path, timezone=bad))

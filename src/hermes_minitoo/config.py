@@ -8,6 +8,7 @@ import logging
 import re
 from pathlib import Path
 from urllib.parse import urlsplit
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 LOG = logging.getLogger(__name__)
 
@@ -15,7 +16,7 @@ MAC_RE = re.compile(r"^[0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5}$")
 
 # "talk_key" belongs to scripts/minitoo-talk-key.py: only its type is checked here and
 # it is never forwarded to Hermes Gadget.
-_ALLOWED = {"server", "name", "token", "audio", "minitoo", "talk_key"}
+_ALLOWED = {"server", "name", "token", "timezone", "audio", "minitoo", "talk_key"}
 _MINITOO_ALLOWED = {
     "address", "channel", "update_interval_ms", "chunk_delay_ms",
     "ready_timeout_ms", "reconnect_delay_ms", "max_payload_bytes",
@@ -50,8 +51,8 @@ def _is_loopback(host: str) -> bool:
 def load_config(path: Path) -> dict:
     raw = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict) or set(raw) - _ALLOWED:
-        raise ValueError("unknown config field; expected server, name, token, audio, minitoo "
-                         "or talk_key")
+        raise ValueError("unknown config field; expected server, name, token, timezone, audio, "
+                         "minitoo or talk_key")
     if not isinstance(raw.get("server"), str):
         raise ValueError("server is required")
     url = urlsplit(raw["server"])
@@ -60,6 +61,12 @@ def load_config(path: Path) -> dict:
 
     if "name" in raw and (not isinstance(raw["name"], str) or not raw["name"].strip()):
         raise ValueError("name must be a non-empty string")
+    if "timezone" in raw:
+        # The resting clock's zone (IANA name, e.g. Europe/Moscow); absent = the host's zone.
+        try:
+            ZoneInfo(raw["timezone"])
+        except (TypeError, ValueError, ZoneInfoNotFoundError) as exc:
+            raise ValueError("timezone must be an IANA zone name like Europe/Moscow") from exc
     if "token" in raw:
         if not isinstance(raw["token"], str) or not raw["token"]:
             raise ValueError("token must be a non-empty string")

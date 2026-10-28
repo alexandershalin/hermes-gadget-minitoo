@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3 — 2026-10-28
+
+- `hermes-gadget-minitoo console "<line>"` runs one line of the device core's console (`set clock 60`, `get volume`, `status`).
+- Config `timezone` (IANA name, e.g. `Europe/Moscow`) sets the zone of the resting clock; without it the host's zone is used (servers often run in UTC).
+- STT client: sends 16 kHz WAV with a high-pass and loudness normalisation instead of 32 kbit/s mp3; docs recommend `openai/gpt-4o-transcribe` (WER on simulated HFP speech 29% -> 15%, see docs/PORTABILITY.md).
+
 ## 0.2.2 — 2026-10-28
 
 - Hermes Gadget SDK updated from v0.2.0 (`323e330`) to v0.4.1 (`81f05a1`); the native core (`libhgsim`, ABI 8) must be rebuilt with `hermes-gadget build-sim`.

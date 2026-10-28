@@ -49,6 +49,10 @@ class FakeDevice:
     def mic_samples(self, pcm):
         self.pcm = pcm
 
+    def console(self, line):
+        self.console_lines = [*getattr(self, "console_lines", []), line]
+        return "@ok"
+
 
 class FakeDisplay:
     width, height = 160, 128
@@ -103,6 +107,8 @@ def test_command_status_messages_button_send_event(client):
     assert client.device.sent == ["hi"]
     assert client.command({"command": "event", "name": "door.opened", "data": {"a": 1}, "notify": True})
     assert client.device.events == [("door.opened", {"a": 1}, True)]
+    assert client.command({"command": "console", "line": " set clock 60 "}) == {"output": "@ok"}
+    assert client.device.console_lines == ["set clock 60"]
 
 
 @pytest.mark.parametrize("request_", [
@@ -110,6 +116,7 @@ def test_command_status_messages_button_send_event(client):
     {"command": "button", "button": "talk", "pressed": "yes"}, {"command": "send", "text": "  "},
     {"command": "send", "text": "a\x00b"}, {"command": "event", "name": "1bad"},
     {"command": "event", "name": "ok", "notify": "yes"},
+    {"command": "console", "line": " "}, {"command": "console", "line": "a\nb"}, {"command": "console"},
 ])
 def test_invalid_commands_are_rejected(client, request_):
     with pytest.raises(ValueError):
@@ -183,3 +190,14 @@ def test_second_service_in_the_same_state_dir_is_refused(tmp_path):
 
     with device_lock(tmp_path), pytest.raises(RuntimeError, match="another"), device_lock(tmp_path):
         pass
+
+
+def test_wall_time_follows_the_configured_timezone(client):
+    from datetime import datetime, timezone
+    from zoneinfo import ZoneInfo
+
+    assert client.timezone is None  # no timezone in CONFIG: the host's local time
+    client.timezone = ZoneInfo("Asia/Kolkata")  # +05:30, no daylight saving
+    utc = datetime.now(timezone.utc)
+    t = client.wall_time()
+    assert (t.tm_hour * 60 + t.tm_min - (utc.hour * 60 + utc.minute + 330)) % 1440 in (0, 1)
